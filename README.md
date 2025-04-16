@@ -35,6 +35,32 @@ A modern, Django-based system for managing neurological consultations and patien
   - Intuitive navigation
   - Mobile-friendly interface
 
+## 📊 Dashboard Preview
+
+![Dashboard Preview](docs/images/dashboard.png)
+
+The system features a modern, intuitive dashboard that provides:
+
+- **Key Metrics at a Glance**:
+  - Total number of patients under care
+  - Average NIHSS (National Institutes of Health Stroke Scale) scores
+  - Number of pending consultations
+  - Count of critical alerts requiring attention
+
+- **Recent Patients Table**:
+  - Patient name and age
+  - Current NIHSS score
+  - Latest vital signs
+  - Patient status (Critical/Pending)
+  - Quick actions (View/Consult)
+
+- **Critical Alerts Section**:
+  - Real-time alert monitoring
+  - Alert type classification
+  - Time-based tracking
+  - Acknowledgment status
+  - Quick acknowledgment actions
+
 ## 🚀 Getting Started
 
 ### Prerequisites
