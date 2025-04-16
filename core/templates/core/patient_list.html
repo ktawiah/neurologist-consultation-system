@@ -14,7 +14,7 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -32,15 +32,15 @@
                             <td>{{ patient.id }}</td>
                             <td>{{ patient.first_name }} {{ patient.last_name }}</td>
                             <td>{{ patient.age }}</td>
-                            <td>{{ patient.get_gender_display }}</td>
+                            <td>{{ patient.get_sex_display }}</td>
                             <td>{{ patient.nihss_score }}</td>
                             <td>
                                 {% if patient.has_critical_alerts %}
-                                <span class="badge badge-danger">Critical</span>
+                                <span class="badge bg-danger">Critical</span>
                                 {% elif patient.has_pending_consultation %}
-                                <span class="badge badge-warning">Pending Consultation</span>
+                                <span class="badge bg-warning">Pending Consultation</span>
                                 {% else %}
-                                <span class="badge badge-success">Stable</span>
+                                <span class="badge bg-success">Stable</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -60,6 +60,50 @@
                     </tbody>
                 </table>
             </div>
+
+            {% if is_paginated %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
 </div>
