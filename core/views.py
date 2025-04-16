@@ -35,6 +35,9 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password.')
@@ -180,15 +183,6 @@ def dashboard(request):
         patient.latest_vitals = VitalSign.objects.filter(
             patient=patient
         ).order_by('-recorded_at').first()
-        patient.has_critical_alerts = AlertNotification.objects.filter(
-            patient=patient,
-            is_critical=True,
-            acknowledged_at__isnull=True
-        ).exists()
-        patient.has_pending_consultation = NeurologistConsultation.objects.filter(
-            patient=patient,
-            created_at__gte=timezone.now() - timedelta(days=1)
-        ).exists()
 
     # Critical alerts
     critical_alerts_list = AlertNotification.objects.filter(
@@ -245,50 +239,15 @@ class PatientCreateView(LoginRequiredMixin, CreateView):
     model = Patient
     form_class = PatientForm
     template_name = 'core/patient_form.html'
-    success_url = reverse_lazy('patient_list')
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         response = super().form_valid(form)
-        
-        # Create vital signs if all required fields are provided
-        vital_fields = {
-            'blood_pressure_systolic': self.request.POST.get('blood_pressure_systolic'),
-            'blood_pressure_diastolic': self.request.POST.get('blood_pressure_diastolic'),
-            'heart_rate': self.request.POST.get('heart_rate'),
-            'oxygen_saturation': self.request.POST.get('oxygen_saturation'),
-            'respiratory_rate': self.request.POST.get('respiratory_rate', '16')  # Default value
-        }
-        
-        # Check if any vital signs are provided
-        if any(vital_fields.values()):
-            try:
-                VitalSign.objects.create(
-                    patient=form.instance,
-                    blood_pressure_systolic=vital_fields['blood_pressure_systolic'],
-                    blood_pressure_diastolic=vital_fields['blood_pressure_diastolic'],
-                    heart_rate=vital_fields['heart_rate'],
-                    respiratory_rate=vital_fields['respiratory_rate'],
-                    oxygen_saturation=vital_fields['oxygen_saturation'],
-                    recorded_by=self.request.user
-                )
-            except Exception as e:
-                messages.warning(self.request, f'Patient created but vital signs could not be saved: {str(e)}')
-
-        # Create lab results if provided
-        if self.request.POST.get('glucose'):
-            try:
-                LabResult.objects.create(
-                    patient=form.instance,
-                    glucose=self.request.POST['glucose'],
-                    creatinine=self.request.POST.get('creatinine', 0),
-                    recorded_by=self.request.user
-                )
-            except Exception as e:
-                messages.warning(self.request, f'Patient created but lab results could not be saved: {str(e)}')
-
-        messages.success(self.request, 'Patient created successfully.')
+        messages.success(self.request, 'Patient created successfully. You can now add vital signs and lab results.')
         return response
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.pk})
 
 class ConsultationCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = NeurologistConsultation
