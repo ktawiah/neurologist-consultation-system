@@ -5,6 +5,7 @@ from django.utils import timezone
 from datetime import timedelta
 import random
 from faker import Faker
+import os
 
 User = get_user_model()
 fake = Faker()
@@ -12,7 +13,13 @@ fake = Faker()
 class Command(BaseCommand):
     help = 'Generates sample data for testing'
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **options):
+        # Get credentials from environment variables
+        neurologist_username = os.getenv('NEUROLOGIST_USERNAME', 'neurologist')
+        neurologist_password = os.getenv('NEUROLOGIST_PASSWORD', 'neurologist123')
+        technician_username = os.getenv('TECHNICIAN_USERNAME', 'technician')
+        technician_password = os.getenv('TECHNICIAN_PASSWORD', 'technician123')
+
         self.stdout.write('Clearing existing data...')
         # Clear existing data
         AlertNotification.objects.all().delete()
@@ -22,31 +29,29 @@ class Command(BaseCommand):
         VitalSign.objects.all().delete()
         Patient.objects.all().delete()
 
-        # Create a neurologist if none exists
+        # Create or get users
         neurologist, _ = User.objects.get_or_create(
-            username='neurologist',
+            username=neurologist_username,
             defaults={
-                'email': 'neurologist@example.com',
-                'first_name': 'Dr.',
-                'last_name': 'Smith',
-                'role': 'NR'
+                'email': f'{neurologist_username}@example.com',
+                'role': 'NEUROLOGIST'
             }
         )
-        neurologist.set_password('neurologist123')
+        neurologist.set_password(neurologist_password)
         neurologist.save()
 
-        # Create a mobile technician if none exists
         technician, _ = User.objects.get_or_create(
-            username='technician',
+            username=technician_username,
             defaults={
-                'email': 'technician@example.com',
-                'first_name': 'Tech',
-                'last_name': 'Johnson',
-                'role': 'MT'
+                'email': f'{technician_username}@example.com',
+                'role': 'TECHNICIAN'
             }
         )
-        technician.set_password('technician123')
+        technician.set_password(technician_password)
         technician.save()
+
+        self.stdout.write(f'Neurologist - username: {neurologist_username}')
+        self.stdout.write(f'Technician - username: {technician_username}')
 
         self.stdout.write('Generating sample patients...')
         
@@ -170,5 +175,5 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('Successfully generated sample data'))
         self.stdout.write('\nTest users created:')
-        self.stdout.write('Neurologist - username: neurologist, password: neurologist123')
-        self.stdout.write('Technician - username: technician, password: technician123') 
+        self.stdout.write(f'Neurologist - username: {neurologist_username}')
+        self.stdout.write(f'Technician - username: {technician_username}') 

@@ -1,6 +1,6 @@
 # 🧠 Neurologist Consultation System
 
-A modern, Django-based system for managing neurological consultations and patient care. Built with ❤️ for neurologists and healthcare providers.
+A modern, Django-based system for managing neurological consultations and patient care. Built for neurologists and healthcare providers.
 
 ## 🌟 Features
 
@@ -161,9 +161,14 @@ Create a `.env` file in the root directory with the following variables:
 
 ```env
 DEBUG=True
-SECRET_KEY=your-secret-key
-DATABASE_URL=postgres://user:password@localhost:5432/dbname
+SECRET_KEY=your-secret-key-here
+DATABASE_URL=your-database-url-here
 ```
+
+Make sure to:
+- Use a strong, randomly generated secret key
+- Never commit your actual credentials to version control
+- Keep your `.env` file in `.gitignore`
 
 ## 📝 API Documentation
 
