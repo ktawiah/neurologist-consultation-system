@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Add Lab Results{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Add Lab Results</h1>
+        <a href="{% url 'patient_detail' patient.id %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Patient
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Patient: {{ patient.first_name }} {{ patient.last_name }}</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.cbc.id_for_label }}">Complete Blood Count (CBC)</label>
+                            {{ form.cbc }}
+                            {% if form.cbc.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.cbc.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.bmp.id_for_label }}">Basic Metabolic Panel (BMP)</label>
+                            {{ form.bmp }}
+                            {% if form.bmp.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.bmp.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="{{ form.coagulation_studies.id_for_label }}">Coagulation Studies</label>
+                            {{ form.coagulation_studies }}
+                            {% if form.coagulation_studies.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.coagulation_studies.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.glucose.id_for_label }}">Glucose (mg/dL)</label>
+                            {{ form.glucose }}
+                            {% if form.glucose.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.glucose.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.creatinine.id_for_label }}">Creatinine (mg/dL)</label>
+                            {{ form.creatinine }}
+                            {% if form.creatinine.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.creatinine.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Lab Results
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}New Consultation - Neurologist Consultation System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">New Consultation</h2>
+                </div>
+                <div class="card-body">
+                    {% if patient %}
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Patient Information</h5>
+                        <p class="mb-0">
+                            <strong>Name:</strong> {{ patient.first_name }} {{ patient.last_name }}<br>
+                            <strong>Age:</strong> {{ patient.age }} years<br>
+                            <strong>NIHSS Score:</strong> {{ patient.nihss_score }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">
+                                {{ field.label }}
+                                {% if field.field.required %}
+                                <span class="text-danger">*</span>
+                                {% endif %}
+                            </label>
+                            {% render_field field class="form-control" %}
+                            {% if field.help_text %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in field.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                Save Consultation
+                            </button>
+                            <a href="{% url 'patient_detail' patient.id %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-resize textareas as user types
+    document.querySelectorAll('textarea').forEach(textarea => {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+        textarea.addEventListener('input', e => {
+            e.target.style.height = 'auto';
+            e.target.style.height = e.target.scrollHeight + 'px';
+        });
+    });
+</script>
+{% endblock %} 

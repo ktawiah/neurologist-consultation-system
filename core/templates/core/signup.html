@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Neurologist Consultation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .signup-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .signup-header h1 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+            width: 100%;
+            padding: 0.8rem;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        .alert {
+            margin-bottom: 1rem;
+        }
+        .error-feedback {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>Create Account</h1>
+            <p class="text-muted">Join our neurologist consultation platform</p>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                Please correct the errors below.
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'signup' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                    <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" 
+                           id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.html_name }}" 
+                           value="{{ form.first_name.value|default:'' }}" required>
+                    {% if form.first_name.errors %}
+                        <div class="error-feedback">{{ form.first_name.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                    <input type="text" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" 
+                           id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.html_name }}" 
+                           value="{{ form.last_name.value|default:'' }}" required>
+                    {% if form.last_name.errors %}
+                        <div class="error-feedback">{{ form.last_name.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                       id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}" 
+                       value="{{ form.username.value|default:'' }}" required>
+                {% if form.username.errors %}
+                    <div class="error-feedback">{{ form.username.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                       id="{{ form.email.id_for_label }}" name="{{ form.email.html_name }}" 
+                       value="{{ form.email.value|default:'' }}" required>
+                {% if form.email.errors %}
+                    <div class="error-feedback">{{ form.email.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.role.id_for_label }}" class="form-label">Role</label>
+                <select class="form-select {% if form.role.errors %}is-invalid{% endif %}" 
+                        id="{{ form.role.id_for_label }}" name="{{ form.role.html_name }}" required>
+                    <option value="">Select your role</option>
+                    {% for value, label in form.role.field.choices %}
+                        <option value="{{ value }}" {% if form.role.value == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.role.errors %}
+                    <div class="error-feedback">{{ form.role.errors|join:", " }}</div>
+                {% endif %}
+                {% if form.role.help_text %}
+                    <div class="form-text">{{ form.role.help_text }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                <input type="password" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                       id="{{ form.password1.id_for_label }}" name="{{ form.password1.html_name }}" required>
+                {% if form.password1.errors %}
+                    <div class="error-feedback">{{ form.password1.errors|join:", " }}</div>
+                {% endif %}
+                {% if form.password1.help_text %}
+                    <div class="form-text">{{ form.password1.help_text }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                       id="{{ form.password2.id_for_label }}" name="{{ form.password2.html_name }}" required>
+                {% if form.password2.errors %}
+                    <div class="error-feedback">{{ form.password2.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+        
+        <div class="text-center mt-3">
+            <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

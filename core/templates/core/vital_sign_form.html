@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Add Vital Signs{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Add Vital Signs</h1>
+        <a href="{% url 'patient_detail' patient.id %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Patient
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Patient: {{ patient.first_name }} {{ patient.last_name }}</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.blood_pressure_systolic.id_for_label }}">Systolic Blood Pressure</label>
+                            {{ form.blood_pressure_systolic }}
+                            {% if form.blood_pressure_systolic.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.blood_pressure_systolic.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.blood_pressure_diastolic.id_for_label }}">Diastolic Blood Pressure</label>
+                            {{ form.blood_pressure_diastolic }}
+                            {% if form.blood_pressure_diastolic.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.blood_pressure_diastolic.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.heart_rate.id_for_label }}">Heart Rate</label>
+                            {{ form.heart_rate }}
+                            {% if form.heart_rate.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.heart_rate.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.respiratory_rate.id_for_label }}">Respiratory Rate</label>
+                            {{ form.respiratory_rate }}
+                            {% if form.respiratory_rate.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.respiratory_rate.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="{{ form.oxygen_saturation.id_for_label }}">Oxygen Saturation (%)</label>
+                            {{ form.oxygen_saturation }}
+                            {% if form.oxygen_saturation.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.oxygen_saturation.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Vital Signs
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

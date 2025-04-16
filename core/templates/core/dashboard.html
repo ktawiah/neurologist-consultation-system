@@ -1,0 +1,161 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard - Neurologist Consultation System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Dashboard</h2>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Patients</h5>
+                    <h2 class="card-text">{{ total_patients }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Average NIHSS</h5>
+                    <h2 class="card-text">{{ avg_nihss|floatformat:1 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Consultations</h5>
+                    <h2 class="card-text">{{ pending_consultations }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Critical Alerts</h5>
+                    <h2 class="card-text">{{ critical_alerts }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Patients -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Recent Patients</h5>
+            <a href="{% url 'patient_list' %}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>NIHSS</th>
+                            <th>Last Vitals</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in recent_patients %}
+                        <tr>
+                            <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                            <td>{{ patient.age }}</td>
+                            <td>{{ patient.nihss_score }}</td>
+                            <td>
+                                {% if patient.latest_vitals %}
+                                {{ patient.latest_vitals.blood_pressure_systolic }}/{{ patient.latest_vitals.blood_pressure_diastolic }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if patient.has_critical_alerts %}
+                                <span class="badge bg-danger">Critical</span>
+                                {% elif patient.has_pending_consultation %}
+                                <span class="badge bg-warning">Pending</span>
+                                {% else %}
+                                <span class="badge bg-success">Stable</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'patient_detail' patient.id %}" class="btn btn-sm btn-outline-primary">
+                                    View
+                                </a>
+                                <a href="{% url 'consultation_create' patient.id %}" class="btn btn-sm btn-outline-success">
+                                    Consult
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No recent patients</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Critical Alerts -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Critical Alerts</h5>
+            <a href="{% url 'alerts' %}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Alert Type</th>
+                            <th>Message</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alert in critical_alerts_list %}
+                        <tr>
+                            <td>{{ alert.patient.first_name }} {{ alert.patient.last_name }}</td>
+                            <td>{{ alert.get_alert_type_display }}</td>
+                            <td>{{ alert.message }}</td>
+                            <td>{{ alert.created_at|timesince }} ago</td>
+                            <td>
+                                {% if alert.acknowledged_at %}
+                                <span class="badge bg-success">Acknowledged</span>
+                                {% else %}
+                                <span class="badge bg-danger">Unacknowledged</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not alert.acknowledged_at %}
+                                <form method="post" action="{% url 'alert_acknowledge' alert.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-success">
+                                        Acknowledge
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No critical alerts</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

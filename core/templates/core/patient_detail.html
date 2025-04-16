@@ -1,0 +1,212 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ patient.first_name }} {{ patient.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ patient.first_name }} {{ patient.last_name }}</h1>
+        <div>
+            <a href="{% url 'patient_edit' patient.pk %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit Patient
+            </a>
+            <a href="{% url 'patient_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Patients
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Patient Information -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Patient Information</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>ID:</strong> {{ patient.id }}</p>
+                    <p><strong>Age:</strong> {{ patient.age }}</p>
+                    <p><strong>Gender:</strong> {{ patient.get_sex_display }}</p>
+                    <p><strong>Date of Birth:</strong> {{ patient.date_of_birth }}</p>
+                    <p><strong>NIHSS Score:</strong> {{ patient.nihss_score }}</p>
+                    <p><strong>Medical History:</strong> {{ patient.medical_history|default:"None" }}</p>
+                    <p><strong>Chief Complaint:</strong> {{ patient.chief_complaint }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vital Signs -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Vital Signs</h6>
+                    <a href="{% url 'vital_sign_create' patient.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add Vital Signs
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Blood Pressure</th>
+                                    <th>Heart Rate</th>
+                                    <th>Respiratory Rate</th>
+                                    <th>Oxygen Saturation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vital in vital_signs %}
+                                <tr>
+                                    <td>{{ vital.recorded_at }}</td>
+                                    <td>{{ vital.blood_pressure_systolic }}/{{ vital.blood_pressure_diastolic }}</td>
+                                    <td>{{ vital.heart_rate }}</td>
+                                    <td>{{ vital.respiratory_rate }}</td>
+                                    <td>{{ vital.oxygen_saturation }}%</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No vital signs recorded</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Lab Results -->
+        <div class="col-xl-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Lab Results</h6>
+                    <a href="{% url 'lab_result_create' patient.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add Lab Result
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Glucose</th>
+                                    <th>Creatinine</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lab in lab_results %}
+                                <tr>
+                                    <td>{{ lab.recorded_at }}</td>
+                                    <td>{{ lab.glucose }}</td>
+                                    <td>{{ lab.creatinine }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">No lab results recorded</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultations -->
+        <div class="col-xl-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Consultations</h6>
+                    <a href="{% url 'consultation_create' patient.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add Consultation
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Neurologist</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for consultation in consultations %}
+                                <tr>
+                                    <td>{{ consultation.created_at }}</td>
+                                    <td>{{ consultation.neurologist.get_full_name }}</td>
+                                    <td>{{ consultation.notes|truncatechars:50 }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">No consultations recorded</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Alerts</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for alert in alerts %}
+                                <tr>
+                                    <td>{{ alert.created_at }}</td>
+                                    <td>{{ alert.get_alert_type_display }}</td>
+                                    <td>{{ alert.message }}</td>
+                                    <td>
+                                        {% if alert.acknowledged_at %}
+                                        <span class="badge badge-success">Acknowledged</span>
+                                        {% else %}
+                                        <span class="badge badge-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not alert.acknowledged_at %}
+                                        <a href="{% url 'alert_acknowledge' alert.id %}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-check"></i> Acknowledge
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No alerts</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

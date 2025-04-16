@@ -1,0 +1,76 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Patients{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Patients</h1>
+        <a href="{% url 'patient_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Patient
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>NIHSS Score</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                        <tr>
+                            <td>{{ patient.id }}</td>
+                            <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                            <td>{{ patient.age }}</td>
+                            <td>{{ patient.get_gender_display }}</td>
+                            <td>{{ patient.nihss_score }}</td>
+                            <td>
+                                {% if patient.has_critical_alerts %}
+                                <span class="badge badge-danger">Critical</span>
+                                {% elif patient.has_pending_consultation %}
+                                <span class="badge badge-warning">Pending Consultation</span>
+                                {% else %}
+                                <span class="badge badge-success">Stable</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'patient_detail' patient.pk %}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="{% url 'patient_edit' patient.pk %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No patients found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable({
+            "order": [[0, "desc"]]
+        });
+    });
+</script>
+{% endblock %} 
