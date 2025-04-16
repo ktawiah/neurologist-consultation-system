@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from ..models import AlertNotification
 
+# For alert notification
+
 class AlertNotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlertNotification
