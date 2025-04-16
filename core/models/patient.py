@@ -3,6 +3,8 @@ from django.utils import timezone
 from datetime import date, timedelta
 from .user import User
 
+# Model for Patient
+
 class Patient(models.Model):
     class Sex(models.TextChoices):
         MALE = 'M', 'Male'
