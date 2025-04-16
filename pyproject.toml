@@ -1,0 +1,19 @@
+[project]
+name = "stroke-unit"
+version = "0.1.0"
+description = "A Django project for stroke unit management"
+authors = [
+    {name = "Your Name"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "django>=5.0.0",
+    "djangorestframework>=3.14.0",
+    "django-widget-tweaks (>=1.5.0,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
