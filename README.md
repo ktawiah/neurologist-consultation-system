@@ -12,10 +12,10 @@ A modern, Django-based system for managing neurological consultations and patien
   - Critical alerts tracking
 
 - 🏥 **Consultation Management**
-  - Detailed consultation records
-  - Treatment plans
-  - Progress notes
-  - Follow-up scheduling
+  - Detailed Consultation Records
+  - Treatment Plan
+  - Progress Notes
+  - Follow-Up Scheduling
 
 - 📊 **Lab Results & Imaging**
   - Upload and track lab results
