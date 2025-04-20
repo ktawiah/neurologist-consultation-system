@@ -77,7 +77,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-ALLOWED_HOSTS = ['*']
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
