@@ -153,3 +153,4 @@ SECURE_PROXY_SSL_HEADER = None
 SECURE_HSTS_SECONDS = None
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_FRAME_DENY = False
+CSRF_TRUSTED_ORIGINS = ['https://*.127.0.0.1', 'https://*.localhost', 'https://neurologist-consultation-system.onrender.com']
