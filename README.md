@@ -2,6 +2,10 @@
 
 A modern, Django-based system for managing neurological consultations and patient care. Built for neurologists and healthcare providers.
 
+## 📊 Dashboard Preview
+
+![Dashboard Preview](docs/images/dashboard.png)
+
 ## 🌟 Features
 
 - 👨‍⚕️ **Patient Management**
@@ -34,10 +38,6 @@ A modern, Django-based system for managing neurological consultations and patien
   - Responsive design
   - Intuitive navigation
   - Mobile-friendly interface
-
-## 📊 Dashboard Preview
-
-![Dashboard Preview](docs/images/dashboard.png)
 
 The system features a modern, intuitive dashboard that provides:
 
