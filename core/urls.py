@@ -1,4 +1,6 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
+from django.views.generic import RedirectView
 from .views import (
     dashboard, PatientListView, PatientDetailView,
     PatientCreateView, PatientUpdateView, alert_acknowledge,
@@ -7,12 +9,15 @@ from .views import (
 )
 
 urlpatterns = [
+    # Root URL - redirects to dashboard if authenticated, otherwise shows login
+    path('', login_required(RedirectView.as_view(pattern_name='dashboard'), login_url='login/'), name='root'),
+    
     # Authentication URLs
     path('login/', login_view, name='login'),
     path('signup/', SignUpView.as_view(), name='signup'),
     
     # Frontend URLs
-    path('', dashboard, name='dashboard'),
+    path('dashboard/', dashboard, name='dashboard'),
     path('patients/', PatientListView.as_view(), name='patient_list'),
     path('patients/<int:pk>/', PatientDetailView.as_view(), name='patient_detail'),
     path('patients/new/', PatientCreateView.as_view(), name='patient_create'),

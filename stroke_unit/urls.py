@@ -27,5 +27,5 @@ urlpatterns = [
     
     # Frontend URLs
     path('', include('core.urls')),
-    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
 ]

@@ -77,6 +77,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'neurologist-consultation-system.onrender.com']
+
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -109,6 +111,6 @@ REST_FRAMEWORK = {
 }
 
 # Login/Logout URLs
-LOGIN_URL = 'login'
+LOGIN_URL = ''
 LOGIN_REDIRECT_URL = 'dashboard'
-LOGOUT_REDIRECT_URL = 'login' 
+# LOGOUT_REDIRECT_URL = '' 
