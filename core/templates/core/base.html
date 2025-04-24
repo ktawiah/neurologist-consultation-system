@@ -381,10 +381,189 @@
             font-size: 0.875rem;
             opacity: 0.9;
         }
+
+        /* Auth Pages */
+        .auth-content {
+            margin-left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 2rem;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .auth-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 2.5rem;
+            width: 100%;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .auth-header img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-header h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .auth-header p {
+            color: var(--text-light);
+            font-size: 1rem;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 1.75rem;
+        }
+
+        .auth-form .form-label {
+            font-size: 0.9375rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .auth-form .input-group {
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-form .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .auth-form .input-icon img {
+            width: 20px;
+            height: 20px;
+            opacity: 0.6;
+        }
+
+        .auth-form .form-control {
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            font-size: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            background-color: var(--gray-50);
+            transition: all 0.2s ease;
+        }
+
+        .auth-form .form-control:focus {
+            background-color: var(--white);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+
+        .auth-form .form-text {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .auth-form .btn {
+            width: 100%;
+            padding: 0.875rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: var(--radius-lg);
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .auth-form .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .auth-content {
+                padding: 1.5rem;
+            }
+
+            .auth-container {
+                max-width: 100%;
+            }
+
+            .auth-card {
+                padding: 2rem;
+                border-radius: var(--radius-md);
+            }
+
+            .auth-header {
+                margin-bottom: 2rem;
+            }
+
+            .auth-header img {
+                width: 56px;
+                height: 56px;
+                margin-bottom: 1.25rem;
+            }
+
+            .auth-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .auth-form .form-group {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-content {
+                padding: 1rem;
+            }
+
+            .auth-card {
+                padding: 1.5rem;
+            }
+
+            .auth-header img {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 1rem;
+            }
+
+            .auth-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .auth-header p {
+                font-size: 0.875rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="layout">
+        {% if user.is_authenticated %}
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -430,8 +609,9 @@
                 </a>
             </nav>
         </aside>
+        {% endif %}
 
-        <main class="main-content">
+        <main class="main-content {% if not user.is_authenticated %}auth-content{% endif %}">
             <div class="header">
                 <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
                 {% block header_actions %}{% endblock %}
