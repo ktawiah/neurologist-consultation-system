@@ -5,7 +5,11 @@ from .views import (
     dashboard, PatientListView, PatientDetailView,
     PatientCreateView, PatientUpdateView, alert_acknowledge,
     AlertListView, ConsultationCreateView, VitalSignCreateView,
-    LabResultCreateView, login_view, SignUpView
+    LabResultCreateView, login_view, SignUpView, ImagingStudyCreateView,
+    VitalSignUpdateView, VitalSignDeleteView,
+    LabResultUpdateView, LabResultDeleteView,
+    ImagingStudyUpdateView, ImagingStudyDeleteView,
+    ConsultationUpdateView, ConsultationDeleteView
 )
 
 urlpatterns = [
@@ -24,7 +28,24 @@ urlpatterns = [
     path('patients/<int:pk>/edit/', PatientUpdateView.as_view(), name='patient_edit'),
     path('alerts/', AlertListView.as_view(), name='alerts'),
     path('alerts/<int:pk>/acknowledge/', alert_acknowledge, name='alert_acknowledge'),
-    path('consultations/new/<int:patient_id>/', ConsultationCreateView.as_view(), name='consultation_create'),
+    
+    # Vital Signs URLs
     path('vital-signs/new/<int:patient_id>/', VitalSignCreateView.as_view(), name='vital_sign_create'),
+    path('vital-signs/<int:pk>/update/', VitalSignUpdateView.as_view(), name='vital_sign_update'),
+    path('vital-signs/<int:pk>/delete/', VitalSignDeleteView.as_view(), name='vital_sign_delete'),
+    
+    # Lab Results URLs
     path('lab-results/new/<int:patient_id>/', LabResultCreateView.as_view(), name='lab_result_create'),
+    path('lab-results/<int:pk>/update/', LabResultUpdateView.as_view(), name='lab_result_update'),
+    path('lab-results/<int:pk>/delete/', LabResultDeleteView.as_view(), name='lab_result_delete'),
+    
+    # Imaging Studies URLs
+    path('patient/<int:patient_id>/imaging-study/create/', ImagingStudyCreateView.as_view(), name='imaging_study_create'),
+    path('imaging-study/<int:pk>/update/', ImagingStudyUpdateView.as_view(), name='imaging_study_update'),
+    path('imaging-study/<int:pk>/delete/', ImagingStudyDeleteView.as_view(), name='imaging_study_delete'),
+    
+    # Consultation URLs
+    path('consultations/new/<int:patient_id>/', ConsultationCreateView.as_view(), name='consultation_create'),
+    path('consultations/<int:pk>/update/', ConsultationUpdateView.as_view(), name='consultation_update'),
+    path('consultations/<int:pk>/delete/', ConsultationDeleteView.as_view(), name='consultation_delete'),
 ] 

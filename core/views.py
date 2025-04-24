@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from django.db.models import Avg, Count, Q
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import CreateView
-from django.urls import reverse_lazy
+from django.views.generic import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy, reverse
 from .models import (
     User, Patient, VitalSign, LabResult, 
     ImagingStudy, NeurologistConsultation, AlertNotification
@@ -19,8 +19,7 @@ from .serializers import (
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib import messages
 from datetime import timedelta
 from .forms import (
@@ -168,7 +167,9 @@ class AlertNotificationViewSet(viewsets.ModelViewSet):
 def dashboard(request):
     # Statistics
     total_patients = Patient.objects.count()
-    avg_nihss = Patient.objects.aggregate(avg=Avg('nihss_score'))['avg'] or 0
+    avg_nihss = Patient.objects.filter(nihss_score__isnull=False).aggregate(
+        avg=Avg('nihss_score')
+    )['avg'] or 0
     pending_consultations = NeurologistConsultation.objects.filter(
         created_at__gte=timezone.now() - timedelta(days=1)
     ).count()
@@ -186,12 +187,13 @@ def dashboard(request):
 
     # Critical alerts
     critical_alerts_list = AlertNotification.objects.filter(
-        is_critical=True
+        is_critical=True,
+        acknowledged_at__isnull=True
     ).order_by('-created_at')[:5]
 
     context = {
         'total_patients': total_patients,
-        'avg_nihss': avg_nihss,
+        'average_nihss': avg_nihss,
         'pending_consultations': pending_consultations,
         'critical_alerts': critical_alerts,
         'recent_patients': recent_patients,
@@ -226,6 +228,9 @@ class PatientDetailView(LoginRequiredMixin, DetailView):
         
         # Get lab results ordered by recorded_at
         context['lab_results'] = LabResult.objects.filter(patient=patient).order_by('-recorded_at')
+        
+        # Get imaging studies ordered by recorded_at
+        context['imaging_studies'] = ImagingStudy.objects.filter(patient=patient).order_by('-recorded_at')
         
         # Get consultations ordered by created_at
         context['consultations'] = NeurologistConsultation.objects.filter(patient=patient).order_by('-created_at')
@@ -360,3 +365,128 @@ class LabResultCreateView(LoginRequiredMixin, CreateView):
         if patient_id:
             context['patient'] = get_object_or_404(Patient, pk=patient_id)
         return context
+
+class ImagingStudyCreateView(LoginRequiredMixin, CreateView):
+    model = ImagingStudy
+    fields = ['study_type', 'findings']
+    template_name = 'core/imaging_study_form.html'
+
+    def form_valid(self, form):
+        form.instance.patient_id = self.kwargs['patient_id']
+        form.instance.recorded_by = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        patient_id = self.kwargs['patient_id']
+        context['patient'] = get_object_or_404(Patient, pk=patient_id)
+        return context
+
+    def get_success_url(self):
+        return reverse('patient_detail', kwargs={'pk': self.kwargs['patient_id']})
+
+class VitalSignUpdateView(LoginRequiredMixin, UpdateView):
+    model = VitalSign
+    form_class = VitalSignForm
+    template_name = 'core/vital_sign_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patient'] = self.object.patient
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.patient.pk})
+
+class VitalSignDeleteView(LoginRequiredMixin, DeleteView):
+    model = VitalSign
+    template_name = 'core/confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patient'] = self.object.patient
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.patient.pk})
+
+class LabResultUpdateView(LoginRequiredMixin, UpdateView):
+    model = LabResult
+    form_class = LabResultForm
+    template_name = 'core/lab_result_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patient'] = self.object.patient
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.patient.pk})
+
+class LabResultDeleteView(LoginRequiredMixin, DeleteView):
+    model = LabResult
+    template_name = 'core/confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patient'] = self.object.patient
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.patient.pk})
+
+class ImagingStudyUpdateView(LoginRequiredMixin, UpdateView):
+    model = ImagingStudy
+    form_class = ImagingStudyForm
+    template_name = 'core/imaging_study_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patient'] = self.object.patient
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.patient.pk})
+
+class ImagingStudyDeleteView(LoginRequiredMixin, DeleteView):
+    model = ImagingStudy
+    template_name = 'core/confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patient'] = self.object.patient
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.patient.pk})
+
+class ConsultationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = NeurologistConsultation
+    form_class = ConsultationForm
+    template_name = 'core/consultation_form.html'
+
+    def test_func(self):
+        return self.request.user.role == User.Role.NEUROLOGIST
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patient'] = self.object.patient
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.patient.pk})
+
+class ConsultationDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = NeurologistConsultation
+    template_name = 'core/confirm_delete.html'
+
+    def test_func(self):
+        return self.request.user.role == User.Role.NEUROLOGIST
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['patient'] = self.object.patient
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('patient_detail', kwargs={'pk': self.object.patient.pk})
