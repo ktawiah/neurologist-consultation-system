@@ -54,6 +54,7 @@
                                     <th>Heart Rate</th>
                                     <th>Respiratory Rate</th>
                                     <th>Oxygen Saturation</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,10 +65,18 @@
                                     <td>{{ vital.heart_rate }}</td>
                                     <td>{{ vital.respiratory_rate }}</td>
                                     <td>{{ vital.oxygen_saturation }}%</td>
+                                    <td>
+                                        <a href="{% url 'vital_sign_update' vital.id %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{% url 'vital_sign_delete' vital.id %}" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="5" class="text-center">No vital signs recorded</td>
+                                    <td colspan="6" class="text-center">No vital signs recorded</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -96,6 +105,7 @@
                                     <th>Date</th>
                                     <th>Glucose</th>
                                     <th>Creatinine</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -104,10 +114,18 @@
                                     <td>{{ lab.recorded_at }}</td>
                                     <td>{{ lab.glucose }}</td>
                                     <td>{{ lab.creatinine }}</td>
+                                    <td>
+                                        <a href="{% url 'lab_result_update' lab.id %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{% url 'lab_result_delete' lab.id %}" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="3" class="text-center">No lab results recorded</td>
+                                    <td colspan="4" class="text-center">No lab results recorded</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -117,6 +135,55 @@
             </div>
         </div>
 
+        <!-- Imaging Studies -->
+        <div class="col-xl-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Imaging Studies</h6>
+                    <a href="{% url 'imaging_study_create' patient.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add Imaging Study
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Findings</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for study in imaging_studies %}
+                                <tr>
+                                    <td>{{ study.recorded_at }}</td>
+                                    <td>{{ study.get_study_type_display }}</td>
+                                    <td>{{ study.findings|truncatechars:50 }}</td>
+                                    <td>
+                                        <a href="{% url 'imaging_study_update' study.id %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{% url 'imaging_study_delete' study.id %}" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No imaging studies recorded</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
         <!-- Consultations -->
         <div class="col-xl-6">
             <div class="card shadow mb-4">
@@ -134,6 +201,7 @@
                                     <th>Date</th>
                                     <th>Neurologist</th>
                                     <th>Notes</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -142,10 +210,18 @@
                                     <td>{{ consultation.created_at }}</td>
                                     <td>{{ consultation.neurologist.get_full_name }}</td>
                                     <td>{{ consultation.notes|truncatechars:50 }}</td>
+                                    <td>
+                                        <a href="{% url 'consultation_update' consultation.id %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{% url 'consultation_delete' consultation.id %}" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="3" class="text-center">No consultations recorded</td>
+                                    <td colspan="4" class="text-center">No consultations recorded</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -154,11 +230,9 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Alerts -->
-    <div class="row">
-        <div class="col-12">
+        <!-- Alerts -->
+        <div class="col-xl-6">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Alerts</h6>

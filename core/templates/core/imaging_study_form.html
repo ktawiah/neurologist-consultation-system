@@ -1,19 +1,19 @@
 {% extends 'core/base.html' %}
 
-{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Vital Signs{% endblock %}
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Imaging Study{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
         <h2 class="text-2xl font-bold mb-6 text-gray-800">
             {% if form.instance.pk %}
-                Edit Vital Signs for {{ patient.first_name }} {{ patient.last_name }}
+                Edit Imaging Study for {{ patient.first_name }} {{ patient.last_name }}
             {% else %}
-                Add Vital Signs for {{ patient.first_name }} {{ patient.last_name }}
+                Add Imaging Study for {{ patient.first_name }} {{ patient.last_name }}
             {% endif %}
         </h2>
         
-        <form method="post" class="space-y-6">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
             {% csrf_token %}
             
             {% for field in form %}

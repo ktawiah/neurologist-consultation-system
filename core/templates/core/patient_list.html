@@ -1,120 +1,132 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Patients{% endblock %}
+{% block title %}Patients - Neurologist Consultation System{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Patients</h1>
-        <a href="{% url 'patient_create' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Add New Patient
-        </a>
-    </div>
+{% block page_title %}Patients{% endblock %}
 
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>NIHSS Score</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for patient in patients %}
-                        <tr>
-                            <td>{{ patient.id }}</td>
-                            <td>{{ patient.first_name }} {{ patient.last_name }}</td>
-                            <td>{{ patient.age }}</td>
-                            <td>{{ patient.get_sex_display }}</td>
-                            <td>{{ patient.nihss_score }}</td>
-                            <td>
-                                {% if patient.has_critical_alerts %}
-                                <span class="badge bg-danger">Critical</span>
-                                {% elif patient.has_pending_consultation %}
-                                <span class="badge bg-warning">Pending Consultation</span>
-                                {% else %}
-                                <span class="badge bg-success">Stable</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{% url 'patient_detail' patient.pk %}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> View
-                                </a>
-                                <a href="{% url 'patient_edit' patient.pk %}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="7" class="text-center">No patients found.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            {% if is_paginated %}
-            <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1" aria-label="First">
-                            <span aria-hidden="true">&laquo;&laquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                            </li>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
-                            <span aria-hidden="true">&raquo;&raquo;</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
-        </div>
-    </div>
-</div>
+{% block header_actions %}
+<a href="{% url 'patient_create' %}" class="btn btn-primary">
+    Add New Patient
+</a>
 {% endblock %}
 
-{% block extra_js %}
-<script>
-    $(document).ready(function() {
-        $('#dataTable').DataTable({
-            "order": [[0, "desc"]]
-        });
-    });
-</script>
+{% block content %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>NIHSS Score</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in object_list %}
+                <tr>
+                    <td>{{ patient.id }}</td>
+                    <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                    <td>{{ patient.age }}</td>
+                    <td>{{ patient.get_gender_display }}</td>
+                    <td>
+                        <span>
+                            {{ patient.nihss_score }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge {% if patient.nihss_score > 15 %}badge-danger{% elif patient.nihss_score > 5 %}badge-warning{% else %}badge-success{% endif %}">
+                            {% if patient.nihss_score > 15 %}CRITICAL{% elif patient.nihss_score > 5 %}WARNING{% else %}STABLE{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{% url 'patient_detail' patient.id %}" class="btn btn-sm btn-primary">View</a>
+                            <a href="{% url 'patient_edit' patient.id %}" class="btn btn-sm btn-primary">Edit</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if is_paginated %}
+    <div class="card-footer">
+        <nav class="pagination-nav">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .pagination-nav {
+        display: flex;
+        justify-content: center;
+        padding: var(--spacing-md) 0;
+    }
+
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: var(--spacing-xs);
+    }
+
+    .page-item {
+        margin: 0;
+    }
+
+    .page-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        color: var(--primary-color);
+        background-color: var(--white);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .page-link:hover {
+        background-color: var(--gray-50);
+        border-color: var(--primary-color);
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--white);
+    }
+
+    .btn-group {
+        display: flex;
+        gap: var(--spacing-xs);
+    }
+</style>
 {% endblock %} 
