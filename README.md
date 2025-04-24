@@ -39,6 +39,7 @@ A modern, Django-based system for managing neurological consultations and patien
   - Intuitive navigation
   - Mobile-friendly interface
 
+
 The system features a modern, intuitive dashboard that provides:
 
 - **Key Metrics at a Glance**:

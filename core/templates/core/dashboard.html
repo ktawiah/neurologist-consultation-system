@@ -191,9 +191,12 @@
                     </div>
                 </div>
                 <div class="alert-actions">
-                    <button class="btn btn-sm btn-primary">
-                        Acknowledge
-                    </button>
+                    <form method="post" action="{% url 'alert_acknowledge' alert.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            Acknowledge
+                        </button>
+                    </form>
                 </div>
             </div>
             {% empty %}
