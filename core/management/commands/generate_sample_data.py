@@ -243,8 +243,8 @@ class Command(BaseCommand):
                 )
 
             # Create lab results
-            LabResult.objects.create(
-                patient=patient,
+                LabResult.objects.create(
+                    patient=patient,
                 cbc=f"WBC: {random.uniform(4.0, 11.0):.1f}, RBC: {random.uniform(4.0, 6.0):.1f}, HGB: {random.uniform(12.0, 16.0):.1f}, HCT: {random.uniform(35.0, 45.0):.1f}, PLT: {lab_results['platelet_count']}",
                 bmp=f"Na: {random.randint(135,145)}, K: {random.uniform(3.5,5.0):.1f}, Cl: {random.randint(96,106)}, CO2: {random.randint(22,29)}, BUN: {random.randint(8,25)}, Cr: {lab_results['creatinine']:.1f}",
                 coagulation_studies=f"PT: {random.uniform(11.0,13.0):.1f}, INR: {lab_results['inr']:.1f}, PTT: {random.randint(25,35)}",
@@ -276,8 +276,8 @@ class Command(BaseCommand):
                     'Age-appropriate atrophy'
                 ]
 
-            ImagingStudy.objects.create(
-                patient=patient,
+                ImagingStudy.objects.create(
+                    patient=patient,
                 study_type=random.choice(['CT', 'MRI']),
                 findings=random.choice(findings),
                 recorded_by=technician
@@ -307,12 +307,12 @@ class Command(BaseCommand):
                     'Risk factor modification'
                 ])
                 additional_tests = 'Follow-up in stroke clinic in 3 months'
-
-            NeurologistConsultation.objects.create(
-                patient=patient,
-                neurologist=neurologist,
+                
+                NeurologistConsultation.objects.create(
+                    patient=patient,
+                    neurologist=neurologist,
                 diagnosis=f"{'Acute' if status in ['acute_eligible', 'critical'] else 'Chronic'} Ischemic Stroke",
-                treatment_plan=treatment_plan,
+                    treatment_plan=treatment_plan,
                 additional_tests=additional_tests
             )
 
@@ -345,5 +345,5 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Successfully generated production sample data'))
         self.stdout.write('\nTest users created:')
         self.stdout.write(f'Neurologist - username: {neurologist_username}')
-        self.stdout.write(f'Technician - username: {technician_username}')
+        self.stdout.write(f'Technician - username: {technician_username}') 
         self.stdout.write('\nPlease change these passwords immediately after first login!') 

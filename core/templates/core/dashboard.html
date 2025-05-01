@@ -26,7 +26,7 @@
                     <path d="M12 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M9 12H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-            </div>
+                </div>
             <div class="stat-value">{{ average_nihss|floatformat:1 }}</div>
             <div class="stat-label">
                 {% if average_nihss > 15 %}
@@ -79,21 +79,21 @@
                 </svg>
             </a>
         </div>
-        <div class="table-responsive">
+            <div class="table-responsive">
             <table class="table">
-                <thead>
-                    <tr>
+                    <thead>
+                        <tr>
                         <th>Patient</th>
-                        <th>Age</th>
-                        <th>NIHSS</th>
+                            <th>Age</th>
+                            <th>NIHSS</th>
                         <th>Vital Signs</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for patient in recent_patients %}
-                    <tr>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in recent_patients %}
+                        <tr>
                         <td>
                             <div class="patient-info">
                                 <div class="patient-avatar">
@@ -105,20 +105,20 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{ patient.age }}</td>
+                            <td>{{ patient.age }}</td>
                         <td>
                             <div class="nihss-score">
                                 {{ patient.nihss_score }}
                             </div>
                         </td>
-                        <td>
-                            {% if patient.latest_vitals %}
+                            <td>
+                                {% if patient.latest_vitals %}
                             <div class="vital-signs">
                                 <div class="vital-sign">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M22 12H18L15 21L9 3L6 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    {{ patient.latest_vitals.blood_pressure_systolic }}/{{ patient.latest_vitals.blood_pressure_diastolic }}
+                                {{ patient.latest_vitals.blood_pressure_systolic }}/{{ patient.latest_vitals.blood_pressure_diastolic }}
                                 </div>
                                 <div class="vital-sign">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -128,16 +128,16 @@
                                     {{ patient.latest_vitals.heart_rate }}
                                 </div>
                             </div>
-                            {% else %}
+                                {% else %}
                             <span class="text-muted">No data</span>
-                            {% endif %}
-                        </td>
-                        <td>
+                                {% endif %}
+                            </td>
+                            <td>
                             <span class="badge {% if patient.nihss_score > 15 %}badge-danger{% elif patient.nihss_score > 5 %}badge-warning{% else %}badge-success{% endif %}">
                                 {% if patient.nihss_score > 15 %}CRITICAL{% elif patient.nihss_score > 5 %}WARNING{% else %}STABLE{% endif %}
                             </span>
-                        </td>
-                        <td>
+                            </td>
+                            <td>
                             <div class="btn-group">
                                 <a href="{% url 'patient_detail' patient.id %}" class="btn btn-sm btn-primary">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -154,11 +154,11 @@
                                     Consult
                                 </a>
                             </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
         </div>
     </div>
 
@@ -175,7 +175,7 @@
             </a>
         </div>
         <div class="alerts-list">
-            {% for alert in critical_alerts_list %}
+                        {% for alert in critical_alerts_list %}
             <div class="alert-item">
                 <div class="alert-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -191,15 +191,15 @@
                     </div>
                 </div>
                 <div class="alert-actions">
-                    <form method="post" action="{% url 'alert_acknowledge' alert.id %}" class="d-inline">
-                        {% csrf_token %}
+                                <form method="post" action="{% url 'alert_acknowledge' alert.id %}" class="d-inline">
+                                    {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-primary">
-                            Acknowledge
-                        </button>
-                    </form>
+                                        Acknowledge
+                                    </button>
+                                </form>
                 </div>
             </div>
-            {% empty %}
+                        {% empty %}
             <div class="no-alerts">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
